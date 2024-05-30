@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace rteCRUD.Migrations
 {
     /// <inheritdoc />
-    public partial class Criacao : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,8 +32,8 @@ namespace rteCRUD.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Codigo = table.Column<string>(type: "text", nullable: false),
-                    Nome = table.Column<string>(type: "text", nullable: false),
+                    Login = table.Column<string>(type: "text", nullable: false),
+                    Senha = table.Column<string>(type: "text", nullable: false),
                     Ativo = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -49,35 +49,35 @@ namespace rteCRUD.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Codigo = table.Column<string>(type: "text", nullable: false),
                     Nome = table.Column<string>(type: "text", nullable: false),
-                    unidadeId = table.Column<int>(type: "integer", nullable: false),
-                    usuarioId = table.Column<int>(type: "integer", nullable: false)
+                    UnidadeId = table.Column<int>(type: "integer", nullable: false),
+                    UsuarioId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Colaboradores", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Colaboradores_Unidades_unidadeId",
-                        column: x => x.unidadeId,
+                        name: "FK_Colaboradores_Unidades_UnidadeId",
+                        column: x => x.UnidadeId,
                         principalTable: "Unidades",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Colaboradores_Usuarios_usuarioId",
-                        column: x => x.usuarioId,
+                        name: "FK_Colaboradores_Usuarios_UsuarioId",
+                        column: x => x.UsuarioId,
                         principalTable: "Usuarios",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Colaboradores_unidadeId",
+                name: "IX_Colaboradores_UnidadeId",
                 table: "Colaboradores",
-                column: "unidadeId");
+                column: "UnidadeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Colaboradores_usuarioId",
+                name: "IX_Colaboradores_UsuarioId",
                 table: "Colaboradores",
-                column: "usuarioId");
+                column: "UsuarioId");
         }
 
         /// <inheritdoc />

@@ -13,9 +13,9 @@ namespace rteCRUD.Models
 
         public  string Nome { get; set; } = string.Empty;
 
-        public required UnidadeModel unidade { get; set; }
+        public required UnidadeModel Unidade { get; set; }
       
-        public required UsuarioModel usuario { get; set; }
+        public required UsuarioModel Usuario { get; set; }
 
     }
 }

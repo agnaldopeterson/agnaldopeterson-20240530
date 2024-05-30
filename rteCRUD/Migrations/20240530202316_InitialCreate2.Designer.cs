@@ -11,8 +11,8 @@ using rteCRUD.Data;
 namespace rteCRUD.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20240529025832_Criacao")]
-    partial class Criacao
+    [Migration("20240530202316_InitialCreate2")]
+    partial class InitialCreate2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,17 +40,17 @@ namespace rteCRUD.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("unidadeId")
+                    b.Property<int>("UnidadeId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("usuarioId")
+                    b.Property<int>("UsuarioId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("unidadeId");
+                    b.HasIndex("UnidadeId");
 
-                    b.HasIndex("usuarioId");
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Colaboradores");
                 });
@@ -94,7 +94,11 @@ namespace rteCRUD.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Nome")
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Senha")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -105,26 +109,26 @@ namespace rteCRUD.Migrations
 
             modelBuilder.Entity("rteCRUD.Models.ColaboradorModel", b =>
                 {
-                    b.HasOne("rteCRUD.Models.UnidadeModel", "unidade")
-                        .WithMany("Colaborador")
-                        .HasForeignKey("unidadeId")
+                    b.HasOne("rteCRUD.Models.UnidadeModel", "Unidade")
+                        .WithMany("Colaboradores")
+                        .HasForeignKey("UnidadeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("rteCRUD.Models.UsuarioModel", "usuario")
+                    b.HasOne("rteCRUD.Models.UsuarioModel", "Usuario")
                         .WithMany()
-                        .HasForeignKey("usuarioId")
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("unidade");
+                    b.Navigation("Unidade");
 
-                    b.Navigation("usuario");
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("rteCRUD.Models.UnidadeModel", b =>
                 {
-                    b.Navigation("Colaborador");
+                    b.Navigation("Colaboradores");
                 });
 #pragma warning restore 612, 618
         }

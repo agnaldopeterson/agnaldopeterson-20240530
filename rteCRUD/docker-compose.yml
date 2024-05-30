@@ -1,7 +1,7 @@
 ﻿version: '3.4'
 services:
   db:
-    image: postgres:lastet
+    image: postgres:latest
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
@@ -13,10 +13,10 @@ services:
   web:
     build: .
     ports:
-        - "8000:80"
+      - "8000:80"
     depends_on:
-        - db
+      - db
     environment:
-        ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=rteCRUD;Username=postgres;Password=1234"
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=rteCRUD;Username=postgres;Password=1234"
 volumes:
   pgdata:

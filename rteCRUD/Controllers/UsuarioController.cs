@@ -15,8 +15,14 @@ namespace rteCRUD.Controllers
         }
 
         // GET: Usuario
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool? ativo)
         {
+            var usuario = _context.Usuarios.AsQueryable();
+
+            if (ativo.HasValue)
+            {
+                usuario = usuario.Where(u => u.Ativo == ativo.Value);
+            }
             return View(await _context.Usuarios.ToListAsync());
         }
 
@@ -28,8 +34,7 @@ namespace rteCRUD.Controllers
                 return NotFound();
             }
 
-            var usuarioModel = await _context.Usuarios
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var usuarioModel = await _context.Usuarios.FirstOrDefaultAsync(m => m.Id == id);
             if (usuarioModel == null)
             {
                 return NotFound();
@@ -49,10 +54,16 @@ namespace rteCRUD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Codigo,Nome,Ativo")] UsuarioModel usuarioModel)
+        public async Task<IActionResult> Create([Bind("Login,Senha,Ativo")] UsuarioModel usuarioModel)
         {
             if (ModelState.IsValid)
             {
+                if(_context.Usuarios.Any(u => u.Login == usuarioModel.Login))
+                {
+                    ModelState.AddModelError("Login", "Login já cadastrado");
+                    return View(usuarioModel);
+                }
+
                 _context.Add(usuarioModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -81,7 +92,7 @@ namespace rteCRUD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Codigo,Nome,Ativo")] UsuarioModel usuarioModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Login,Senha,Ativo")] UsuarioModel usuarioModel)
         {
             if (id != usuarioModel.Id)
             {
@@ -92,8 +103,13 @@ namespace rteCRUD.Controllers
             {
                 try
                 {
-                    _context.Update(usuarioModel);
-                    await _context.SaveChangesAsync();
+                    var usuarioExistente = await _context.Usuarios.FindAsync(id);
+                    if (usuarioExistente != null)
+                    {
+                        usuarioExistente.Senha = usuarioModel.Senha;
+                        usuarioExistente.Ativo = usuarioModel.Ativo;
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
