@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using rteCRUD.Data;
@@ -46,6 +42,7 @@ namespace rteCRUD.Controllers
         // GET: Colaborador/Create
         public IActionResult Create()
         {
+            PreencherDropdowns();
             return View();
         }
 
@@ -54,7 +51,7 @@ namespace rteCRUD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Codigo,Nome")] ColaboradorModel colaboradorModel)
+        public async Task<IActionResult> Create([Bind("Id,Codigo,Nome,UnidadeId,UsuarioId")] ColaboradorModel colaboradorModel)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +59,7 @@ namespace rteCRUD.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            PreencherDropdowns(colaboradorModel.UnidadeId,colaboradorModel.UsuarioId);
             return View(colaboradorModel);
         }
 
@@ -86,7 +84,7 @@ namespace rteCRUD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Codigo,Nome")] ColaboradorModel colaboradorModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Codigo,Nome,UnidadeId,UsuarioId")] ColaboradorModel colaboradorModel)
         {
             if (id != colaboradorModel.Id)
             {
@@ -152,6 +150,12 @@ namespace rteCRUD.Controllers
         private bool ColaboradorModelExists(int id)
         {
             return _context.Colaboradores.Any(e => e.Id == id);
+        }
+
+        private void PreencherDropdowns(int? selectedUnidadeId = null, int? selectedUsuarioId = null)
+        {
+            ViewBag.Unidades = new SelectList(_context.Unidades.ToList(), "Id", "Nome", selectedUnidadeId);
+            ViewBag.Usuarios = new SelectList(_context.Usuarios.ToList(), "Id", "Login", selectedUsuarioId);
         }
     }
 }

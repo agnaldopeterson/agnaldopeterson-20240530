@@ -13,9 +13,13 @@ namespace rteCRUD.Models
 
         public  string Nome { get; set; } = string.Empty;
 
+        [ForeignKey("UnidadeId")]
         public required UnidadeModel Unidade { get; set; }
-      
+        public int UnidadeId { get; set; }
+
+        [ForeignKey("UsuarioId")]
         public required UsuarioModel Usuario { get; set; }
+        public int UsuarioId { get; set; }
 
     }
 }
