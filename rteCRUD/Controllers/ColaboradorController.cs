@@ -18,6 +18,9 @@ namespace rteCRUD.Controllers
         // GET: Colaborador
         public async Task<IActionResult> Index()
         {
+            var colaboradores = _context.Colaboradores
+                .Include(c => c.Unidade)
+                .Include(c => c.Codigo);
             return View(await _context.Colaboradores.ToListAsync());
         }
 
@@ -30,6 +33,8 @@ namespace rteCRUD.Controllers
             }
 
             var colaboradorModel = await _context.Colaboradores
+                .Include (c => c.Unidade)
+                .Include (c => c.Codigo)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (colaboradorModel == null)
             {
@@ -97,6 +102,7 @@ namespace rteCRUD.Controllers
                 {
                     _context.Update(colaboradorModel);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -108,9 +114,9 @@ namespace rteCRUD.Controllers
                     {
                         throw;
                     }
-                }
-                return RedirectToAction(nameof(Index));
+                }            
             }
+            PreencherDropdowns(colaboradorModel.UnidadeId, colaboradorModel.UsuarioId);
             return View(colaboradorModel);
         }
 
@@ -123,6 +129,8 @@ namespace rteCRUD.Controllers
             }
 
             var colaboradorModel = await _context.Colaboradores
+                .Include(c => c.Unidade)
+                .Include(c => c.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (colaboradorModel == null)
             {
@@ -154,6 +162,9 @@ namespace rteCRUD.Controllers
 
         private void PreencherDropdowns(int? selectedUnidadeId = null, int? selectedUsuarioId = null)
         {
+            var unidadesQuery = from u in _context.Unidades orderby u.Nome select u;
+            var usuariosQuery = from u in _context.Usuarios orderby u.Login select u;
+
             ViewBag.Unidades = new SelectList(_context.Unidades.ToList(), "Id", "Nome", selectedUnidadeId);
             ViewBag.Usuarios = new SelectList(_context.Usuarios.ToList(), "Id", "Login", selectedUsuarioId);
         }

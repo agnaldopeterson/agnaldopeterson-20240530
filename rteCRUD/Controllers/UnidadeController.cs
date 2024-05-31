@@ -12,6 +12,7 @@ namespace rteCRUD.Controllers
 {
     public class UnidadeController : Controller
     {
+        private const string Bind = "Id,Codigo,Nome,Ativo";
         private readonly Contexto _context;
 
         public UnidadeController(Contexto context)
@@ -54,10 +55,15 @@ namespace rteCRUD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Codigo,Nome,Ativo")] UnidadeModel unidadeModel)
+        public async Task<IActionResult> Create([Bind(Bind)] UnidadeModel unidadeModel)
         {
             if (ModelState.IsValid)
             {
+                if (_context.Unidades.Any(u => u.Codigo == unidadeModel.Codigo))
+                {
+                    ModelState.AddModelError("Código", "Código já cadastrado");
+                    return View(unidadeModel);
+                }
                 _context.Add(unidadeModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -86,7 +92,7 @@ namespace rteCRUD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Codigo,Nome,Ativo")] UnidadeModel unidadeModel)
+        public async Task<IActionResult> Edit(int id, [Bind(Bind)] UnidadeModel unidadeModel)
         {
             if (id != unidadeModel.Id)
             {
@@ -97,8 +103,13 @@ namespace rteCRUD.Controllers
             {
                 try
                 {
-                    _context.Update(unidadeModel);
-                    await _context.SaveChangesAsync();
+                    var CodigoExistente = await _context.Unidades.FindAsync(id);
+                    if (CodigoExistente != null)
+                    {
+                        CodigoExistente.Codigo = unidadeModel.Codigo;
+                        CodigoExistente.Nome = unidadeModel.Nome;
+                        await _context.SaveChangesAsync();
+                     }
                 }
                 catch (DbUpdateConcurrencyException)
                 {

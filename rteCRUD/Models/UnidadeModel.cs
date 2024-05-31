@@ -15,14 +15,7 @@ namespace rteCRUD.Models
 
         public required bool Ativo { get; set; } = false;
 
-        public ICollection<ColaboradorModel>? GetColaboradores()
-        {
-            return GetColaboradores();
-        }
+        public ICollection<ColaboradorModel> Colaboradores { get; set; } = new List<ColaboradorModel>();
 
-        public void SetColaboradores(ICollection<ColaboradorModel>? value)
-        {
-            SetColaboradores(value);
-        }
     }
 }
